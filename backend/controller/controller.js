@@ -1,10 +1,8 @@
-// const Appointment = require("../models/appointment");
-const Expense  = require("../models/appointment")
+const Expense = require("../models/appointment")
 exports.createExpense = async (req, res) => {
   try {
     const { name, price, description } = req.body;
-    console.log(name,price,description);
-    const expense = await Expense.create({ name,price,description });
+    const expense = await Expense.create({ name, price, description });
     res.status(201).json(expense);
   } catch (error) {
     console.error(error);
@@ -14,7 +12,6 @@ exports.createExpense = async (req, res) => {
 
 exports.getExpenses = async (req, res) => {
   try {
-    console.log("get expense ran ");
     const expenses = await Expense.findAll();
     res.json(expenses);
   } catch (error) {
@@ -24,16 +21,41 @@ exports.getExpenses = async (req, res) => {
 };
 
 exports.deleteExpense = async (req, res) => {
-  const id = req.params.id; // Extract the id from request parameters
+  const id = req.params.id; 
   console.log("delete ran");
   try {
-    // Find the appointment by id and delete it
     const deletedExpense = await Expense.destroy({ where: { id } });
     if (deletedExpense) {
       res.json({ message: "Appointment deleted successfully" });
     } else {
       res.status(404).json({ error: "Appointment not found" });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+exports.editExpense = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updatedName = req.body.name;
+    const updatedPrice = req.body.price;
+    const updatedDescription = req.body.description;
+
+    const expense = await Expense.findByPk(id);
+
+    if (!expense) {
+      return res.status(404).json({ error: "Expense not found" });
+    }
+    expense.name = updatedName;
+    expense.price = updatedPrice;
+    expense.description = updatedDescription;
+
+    await expense.save();
+
+    res.status(200).json({ message: "Expense updated successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });

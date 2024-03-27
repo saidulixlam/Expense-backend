@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors= require('cors');
+const cors = require('cors');
 const sequelize = require('./utils/database');
 const controller = require("./controller/controller");
 
@@ -14,10 +14,10 @@ app.use(cors());
   console.log("Appointment model synced with database.");
 })();
 
-// Define routes
 app.post("/expenses", controller.createExpense);
 app.get("/expenses", controller.getExpenses);
-app.delete('/expenses/:id', controller.deleteExpense); 
+app.delete('/expenses/:id', controller.deleteExpense);
+app.put('/expenses/:id', controller.editExpense);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
